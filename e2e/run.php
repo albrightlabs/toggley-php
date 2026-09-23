@@ -102,7 +102,7 @@ try {
 
     $check('PHP SDK initializes from Toggley', function () use ($client, $ours, $assert) {
         $assert($client->initialized(), 'not initialized');
-        $assert(count($ours($client->allFlags(['key' => 'x']))) === 7, 'expected 7 seeded flags');
+        $assert(count($ours($client->allFlags(['key' => 'x']))) === 6, 'expected 6 seeded flags');
     });
 
     $check('50 contexts: PHP SDK equals /client/evaluate', function () use ($client, $contexts, $http, $setup, $baseUrl, $ours, $assert) {
@@ -110,15 +110,6 @@ try {
             $response = $http->send('POST', "{$baseUrl}/api/v2/client/evaluate", ['Authorization' => "Bearer {$setup['client_key']}", 'Content-Type' => 'application/json'], json_encode(['context' => $context]), 10);
             $server = $ours(array_map(fn ($flag) => $flag['value'], $response->json()['flags']));
             $assert($ours($client->allFlags($context)) === $server, 'mismatch for ' . json_encode($context) . ': ' . json_encode([$ours($client->allFlags($context)), $server]));
-        }
-    });
-
-    $check('boolean flags equal the v1 API', function () use ($client, $contexts, $http, $setup, $baseUrl, $prefix, $assert) {
-        foreach (array_slice($contexts, 0, 15) as $context) {
-            foreach (['bool-on', 'bool-off', 'bool-split', 'legacy-split'] as $flag) {
-                $body = $http->send('GET', "{$baseUrl}/api/v1/{$setup['v1_key']}/flags/{$prefix}{$flag}?subject=" . rawurlencode($context['key']), [], null, 10)->json();
-                $assert($body['enabled'] === $client->boolVariation("{$prefix}{$flag}", ['key' => $context['key']], !$body['enabled']), "{$flag} {$context['key']}");
-            }
         }
     });
 

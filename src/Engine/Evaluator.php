@@ -327,7 +327,7 @@ final class Evaluator
         }
 
         $rollout = $serve['rollout'];
-        if (!is_array($rollout) || !in_array($rollout['hash'] ?? null, ['legacy', 'v2'], true)
+        if (!is_array($rollout) || ($rollout['hash'] ?? null) !== 'v2'
             || (isset($rollout['seed']) && !is_string($rollout['seed']))
             || (isset($rollout['bucketBy']) && (!is_string($rollout['bucketBy']) || $rollout['bucketBy'] === ''))
             || empty($rollout['variations']) || !is_array($rollout['variations']) || !array_is_list($rollout['variations'])) {

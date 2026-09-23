@@ -8,12 +8,9 @@ namespace Toggley\Engine;
  * Bucketer places a context in a bucket from 0 to 99999 for percentage splits.
  *
  *   X = the first 8 hex characters of sha256(input), as an unsigned 32-bit integer
- *   v2:     input "{salt}.{bucketKey}", bucket = X % 100000
- *   legacy: input "{salt}:{bucketKey}", bucket = (X % 100) * 1000
+ *   bucket = X % 100000, over the input "{salt}.{bucketKey}"
  *
- * "legacy" reproduces the 1.0.12 split exactly (salt = the flag id), so users who
- * were on stay on. Unkeyed contexts get a random bucket, rounded down to a
- * multiple of 1000 for legacy.
+ * An unkeyed context is bucketed at random instead, so it gets no sticky variation.
  */
 final class Bucketer
 {
@@ -49,12 +46,7 @@ final class Bucketer
     public static function bucket(string $hash, string $salt, ?string $bucketKey, RandomSource $random): int
     {
         if ($bucketKey === null) {
-            $n = $random->nextInt(self::BUCKETS);
-            return $hash === 'legacy' ? intdiv($n, 1000) * 1000 : $n;
-        }
-
-        if ($hash === 'legacy') {
-            return (static::prefix($salt . ':' . $bucketKey) % 100) * 1000;
+            return $random->nextInt(self::BUCKETS);
         }
 
         return static::prefix($salt . '.' . $bucketKey) % self::BUCKETS;
