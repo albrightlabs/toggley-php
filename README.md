@@ -6,7 +6,7 @@ Feature flags from [Toggley](https://toggleyapp.com), evaluated in your PHP proc
 composer require albrightlabs/toggley-php
 ```
 
-Requires PHP 8.1+. Laravel 10, 11 and 12 are supported out of the box; plain PHP needs any PSR-16 cache.
+Requires PHP 8.2+. Laravel 12 and later are supported out of the box; plain PHP needs any PSR-16 cache.
 
 ## Laravel
 
